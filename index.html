@@ -1,0 +1,768 @@
+<!doctype html>
+<html lang="ko" data-tab="overview">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>인시디예스 무대기획팀</title>
+<style>
+/* ─────────────────────────────────────────────
+   TOKENS — 다크모드 미포함(발표 투사·인쇄가 주 용도라 라이트 고정)
+   ───────────────────────────────────────────── */
+:root{
+  --blue-100:#c9e0fc;--blue-400:#296ef9;--blue-500:#024ad8;--blue-700:#0e3191;
+  --gray-0:#fff;--gray-50:#f7f7f7;--gray-100:#e8e8e8;--gray-300:#c2c2c2;
+  --gray-600:#636363;--gray-700:#3d3d3d;--gray-900:#292929;--gray-950:#1a1a1a;
+  --brick-600:#b3262b;--teal-700:#356373;
+
+  --bg:var(--gray-0);--bg-subtle:var(--gray-50);--bg-muted:var(--gray-100);
+  --bg-inverse:var(--gray-950);--surface:var(--gray-0);
+  --border:var(--gray-100);--border-strong:var(--gray-300);
+  --fg:var(--gray-950);--fg-muted:var(--gray-700);--fg-subtle:var(--gray-600);
+  --fg-inverse:var(--gray-0);
+  --accent:var(--blue-500);--accent-hover:var(--blue-400);--accent-active:var(--blue-700);
+  --accent-subtle:var(--blue-100);--accent-on-dark:var(--blue-400);--on-accent:var(--gray-0);
+  --risk:var(--brick-600);--info:var(--teal-700);--focus-ring:var(--blue-500);
+  --shadow-lift:0 2px 8px rgb(26 26 26/.08);
+
+  --font-sans:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,
+    system-ui,"Apple SD Gothic Neo",sans-serif;
+  --fs-cover:clamp(2rem,1.3rem + 2.9vw,3.5rem);
+  --fs-h1:clamp(1.6rem,1.25rem + 1.5vw,2.25rem);
+  --fs-h2:clamp(1.3rem,1.1rem + .8vw,1.6rem);
+  --fs-h3:1.125rem;
+  --fs-lead:1.125rem;--fs-body:1rem;--fs-caption:.875rem;--fs-micro:.75rem;
+  --fs-stat:clamp(1.75rem,1.3rem + 1.9vw,2.5rem);
+  --fs-button:.875rem;
+
+  --space-1:.25rem;--space-2:.5rem;--space-3:.75rem;--space-4:1rem;--space-5:1.25rem;
+  --space-6:1.5rem;--space-8:2rem;--space-10:2.5rem;--space-12:3rem;--space-16:4rem;
+  --section:clamp(2.5rem,1.5rem + 4vw,4rem);
+  --gutter:clamp(1rem,.5rem + 2.5vw,2rem);
+  --container:1120px;--measure:72ch;
+  --radius-md:4px;--radius-lg:8px;--radius-xl:16px;--radius-pill:9999px;
+  --dur-fast:120ms;--ease-out:cubic-bezier(.2,0,0,1);
+}
+
+/* ── RESET ── */
+*,*::before,*::after{box-sizing:border-box}
+body,h1,h2,h3,h4,p,ul,ol,li,figure,table,dl,dd{margin:0;padding:0}
+ul,ol{list-style:none}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--bg);color:var(--fg);
+  font-family:var(--font-sans);font-size:var(--fs-body);font-weight:400;line-height:1.65;
+  word-break:keep-all;overflow-wrap:anywhere;
+}
+img{max-width:100%;height:auto;display:block}
+a{color:var(--accent);text-underline-offset:.2em}
+a:hover{color:var(--accent-hover)}
+:focus-visible{outline:2px solid var(--focus-ring);outline-offset:2px}
+
+/* ── LAYOUT PRIMITIVES (5종) ── */
+.container{max-width:var(--container);margin-inline:auto;padding-inline:var(--gutter)}
+.stack>*+*{margin-block-start:var(--space-6)}
+.grid{display:grid;gap:var(--space-6);align-items:start;
+  grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr))}
+.split{display:grid;gap:var(--space-6);grid-template-columns:minmax(140px,1fr) 3fr;align-items:start}
+.cluster{display:flex;flex-wrap:wrap;gap:var(--space-3);align-items:center}
+.callout{border-inline-start:3px solid var(--border-strong);border-radius:var(--radius-xl);
+  padding:var(--space-5) var(--space-6);background:var(--bg-subtle)}
+.measure{max-width:var(--measure)}
+
+/* ── TYPE ── */
+h1,h2,h3,h4{font-weight:500;line-height:1.2}
+h1{font-size:var(--fs-cover);line-height:1.05}
+h2{font-size:var(--fs-h1);line-height:1.15}
+h3{font-size:var(--fs-h2);line-height:1.25}
+h4{font-size:var(--fs-h3);font-weight:600;line-height:1.4}
+.lead{font-size:var(--fs-lead);line-height:1.55;color:var(--fg-muted)}
+.caption{font-size:var(--fs-caption);line-height:1.5;color:var(--fg-subtle)}
+.eyebrow{font-size:var(--fs-micro);font-weight:600;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--fg-subtle)}
+
+/* ── SKIP LINK (position:absolute 허용 예외) ── */
+.skip{position:absolute;left:-9999px;top:0;z-index:10;
+  background:var(--fg);color:var(--fg-inverse);padding:var(--space-3) var(--space-4);
+  border-radius:0 0 var(--radius-md) 0}
+.skip:focus{left:0}
+
+/* ── DOC HEADER ── */
+.doc-header{background:var(--bg-subtle);border-block-end:1px solid var(--border);
+  padding-block:var(--section)}
+.doc-header .sub{margin-block-start:var(--space-4)}
+.doc-header .meta{margin-block-start:var(--space-6);gap:var(--space-2) var(--space-5)}
+.doc-header .meta li{font-size:var(--fs-caption);color:var(--fg-subtle)}
+.doc-header .meta li b{font-weight:600;color:var(--fg-muted)}
+
+/* ── TAB NAV ── */
+.tabs{position:sticky;top:0;z-index:5;background:var(--bg);
+  border-block-end:1px solid var(--border)}
+.tablist{display:flex;flex-wrap:wrap;gap:var(--space-1);padding-block:var(--space-3)}
+.tab{
+  appearance:none;border:1px solid transparent;background:transparent;
+  font-family:inherit;font-size:var(--fs-button);font-weight:600;color:var(--fg-muted);
+  padding:var(--space-3) var(--space-5);min-height:44px;border-radius:var(--radius-md);
+  cursor:pointer;transition:color var(--dur-fast) var(--ease-out),
+    background-color var(--dur-fast) var(--ease-out),border-color var(--dur-fast) var(--ease-out);
+}
+@media (hover:hover){.tab:hover{background:var(--bg-subtle);color:var(--fg)}}
+.tab[aria-selected=true]{background:var(--fg);color:var(--fg-inverse);border-color:var(--fg)}
+.tab .n{font-variant-numeric:tabular-nums;margin-inline-end:var(--space-2);
+  color:var(--fg-subtle)}
+.tab[aria-selected=true] .n{color:var(--gray-300)}
+
+/* ── PANEL ── */
+.panel{padding-block:var(--section)}
+html[data-js=on] .panel[hidden]{display:none}
+.panel>*+*{margin-block-start:var(--space-12)}
+.panel-title{margin-block-end:var(--space-4)}
+
+/* 섹션 자동 번호 — 패널마다 리셋 */
+.panel{counter-reset:sec}
+.sec{margin-block-start:var(--space-16)}
+.sec:first-of-type{margin-block-start:var(--space-12)}
+.sec-title{counter-increment:sec;margin-block-end:var(--space-4)}
+.sec-title::before{content:counter(sec) ". ";color:var(--accent);
+  font-variant-numeric:tabular-nums}
+
+/* ── SUMMARY BOX ── */
+.summary{background:var(--accent-subtle);border-radius:var(--radius-xl);
+  padding:var(--space-6) var(--space-8)}
+.summary ul{margin-block-start:var(--space-4)}
+.summary li+li{margin-block-start:var(--space-2)}
+.summary li{padding-inline-start:var(--space-5);position:relative}
+.summary li::before{content:"—";position:absolute;left:0;color:var(--accent)}
+
+/* ── STAT TILE ── */
+.stat-tile{background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius-xl);padding:var(--space-6);box-shadow:var(--shadow-lift)}
+.stat-tile .num{font-size:var(--fs-stat);font-weight:500;line-height:1.1;
+  font-variant-numeric:tabular-nums;display:block}
+.stat-tile .lab{font-size:var(--fs-caption);color:var(--fg-subtle);
+  display:block;margin-block-start:var(--space-2)}
+
+/* ── TABLE ── */
+.scroll-x{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;min-width:min(100%,520px);
+  font-size:var(--fs-caption)}
+caption{text-align:left;font-size:var(--fs-caption);color:var(--fg-subtle);
+  margin-block-end:var(--space-3)}
+th,td{padding:var(--space-3) var(--space-4);text-align:left;vertical-align:top;
+  border-block-end:1px solid var(--border)}
+thead th{font-weight:600;border-block-end:1px solid var(--border-strong);
+  white-space:nowrap}
+tbody th{font-weight:600}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+tfoot td,tfoot th{font-weight:600;border-block-start:1px solid var(--border-strong);
+  border-block-end:none}
+
+/* ── BADGE ── */
+.badge{display:inline-block;font-size:var(--fs-micro);font-weight:600;
+  padding:4px 10px;border-radius:var(--radius-lg);line-height:1.4;white-space:nowrap}
+.badge--done{background:var(--fg);color:var(--fg-inverse)}
+.badge--doing{border:1px solid var(--accent);color:var(--accent)}
+.badge--hold{border:1px solid var(--border-strong);color:var(--fg-muted)}
+.badge--risk{border:1px solid var(--risk);color:var(--risk);font-weight:600}
+
+/* ── CALLOUT 변형 ── */
+.callout .lab{font-size:var(--fs-micro);font-weight:600;letter-spacing:.08em;
+  text-transform:uppercase;display:block;margin-block-end:var(--space-2)}
+.callout--info{border-color:var(--info)}.callout--info .lab{color:var(--info)}
+.callout--decide{border-color:var(--accent)}.callout--decide .lab{color:var(--accent)}
+.callout--note{border-color:var(--fg-muted)}.callout--note .lab{color:var(--fg-muted)}
+.callout--risk{border-color:var(--risk)}.callout--risk .lab{color:var(--risk)}
+.callout p+p{margin-block-start:var(--space-4)}
+
+/* ── 순서 리스트 ── */
+.steps{counter-reset:step}
+.steps li{counter-increment:step;padding-inline-start:var(--space-8);position:relative}
+.steps li+li{margin-block-start:var(--space-3)}
+.steps li::before{content:counter(step);position:absolute;left:0;top:0;
+  font-variant-numeric:tabular-nums;font-weight:600;color:var(--accent)}
+.bullets li{padding-inline-start:var(--space-5);position:relative}
+.bullets li+li{margin-block-start:var(--space-2)}
+.bullets li::before{content:"·";position:absolute;left:var(--space-2);
+  color:var(--fg-subtle);font-weight:700}
+
+/* ── 카드 ── */
+.card{background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius-xl);padding:var(--space-6)}
+.card>*+*{margin-block-start:var(--space-4)}
+
+/* ── 문서 뷰어 ── */
+.viewer{border:1px solid var(--border);border-radius:var(--radius-xl);overflow:hidden;
+  background:var(--bg-muted)}
+.viewer iframe{width:100%;aspect-ratio:16/9;min-height:360px;border:0;display:block;
+  background:var(--bg-muted)}
+.viewer--tall{max-width:680px}
+.viewer--tall iframe{aspect-ratio:4/5;min-height:520px}
+.viewer-note{margin-block-start:var(--space-3)}
+.viewer-bar{display:flex;flex-wrap:wrap;gap:var(--space-3);align-items:center;
+  justify-content:space-between;padding:var(--space-4) var(--space-5);
+  background:var(--surface);border-block-end:1px solid var(--border)}
+.btn{display:inline-flex;align-items:center;min-height:44px;
+  padding:var(--space-2) var(--space-5);border-radius:var(--radius-md);
+  border:1px solid var(--border-strong);background:var(--surface);color:var(--fg);
+  font-size:var(--fs-button);font-weight:600;text-decoration:none;
+  transition:background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),color var(--dur-fast) var(--ease-out)}
+@media (hover:hover){.btn:hover{border-color:var(--fg);color:var(--fg);background:var(--bg-subtle)}}
+.empty{border:1px dashed var(--border-strong);border-radius:var(--radius-xl);
+  padding:var(--space-12) var(--space-6);text-align:center;background:var(--bg-subtle)}
+.empty .lab{display:block;margin-block-end:var(--space-3)}
+
+/* ── INK SLAB FOOTER ── */
+.band--ink{background:var(--bg-inverse);color:var(--fg-inverse);
+  padding-block:var(--section);margin-block-start:var(--section)}
+.band--ink a{color:var(--accent-on-dark)}
+.band--ink h2{margin-block-end:var(--space-4)}
+.band--ink .caption{color:var(--gray-300)}
+.band--ink th,.band--ink td{border-color:var(--gray-700)}
+.band--ink thead th{border-color:var(--gray-600)}
+
+/* ── MOTION ── */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;
+    transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
+/* ── PRINT ── */
+@media print{
+  :root{--bg:#fff;--bg-subtle:#fff;--bg-muted:#fff;--surface:#fff;--fg:#000;
+    --fg-muted:#333;--accent:#000;--accent-subtle:#fff;--shadow-lift:none}
+  .skip,.tabs{display:none!important}
+  html[data-js=on] .panel[hidden]{display:block!important}
+  .panel{break-before:page}
+  .summary{border:1px solid #999}
+  .band--ink{background:#fff!important;color:#000!important;border-top:1px solid #999}
+  .band--ink .caption,.band--ink a{color:#000!important}
+  table,.callout,.stat-tile,.card,figure{break-inside:avoid}
+  h2,h3{break-after:avoid}
+  .viewer iframe{display:none}
+  @page{size:A4;margin:16mm}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">본문 바로가기</a>
+
+<header class="doc-header">
+  <div class="container">
+    <p class="eyebrow">2026 인시디예스 · 디자인대학 X 예체능대학</p>
+    <h1 class="sub">인시디예스 무대기획팀</h1>
+    <p class="lead measure" style="margin-block-start:var(--space-4)">
+      무대 컨텐츠 4종과 럭키드로우 운영안, 카드뉴스 백본, 큐시트를 한 곳에 모은 기획 자료.
+    </p>
+    <ul class="cluster meta">
+      <li><b>작성</b> 무대기획팀</li>
+      <li><b>작성일</b> 2026-08-19</li>
+      <li><b>버전</b> v1</li>
+      <li><b>공유 범위</b> 학생회 내부</li>
+      <li><b>상태</b> <span class="badge badge--doing">진행중</span></li>
+    </ul>
+  </div>
+</header>
+
+<nav class="tabs" aria-label="자료 분류">
+  <div class="container">
+    <div class="tablist" role="tablist">
+      <button class="tab" role="tab" id="tab-overview" aria-controls="panel-overview" aria-selected="true" type="button" data-target="overview"><span class="n">01</span>개요</button>
+      <button class="tab" role="tab" id="tab-content" aria-controls="panel-content" aria-selected="false" type="button" data-target="content"><span class="n">02</span>무대 컨텐츠</button>
+      <button class="tab" role="tab" id="tab-cardnews" aria-controls="panel-cardnews" aria-selected="false" type="button" data-target="cardnews"><span class="n">03</span>카드뉴스 백본</button>
+      <button class="tab" role="tab" id="tab-cuesheet" aria-controls="panel-cuesheet" aria-selected="false" type="button" data-target="cuesheet"><span class="n">04</span>큐시트</button>
+      <button class="tab" role="tab" id="tab-prizes" aria-controls="panel-prizes" aria-selected="false" type="button" data-target="prizes"><span class="n">05</span>확정 상품</button>
+    </div>
+  </div>
+</nav>
+
+<main id="main">
+
+<!-- ═══════════ 01 개요 ═══════════ -->
+<section class="panel container" id="panel-overview" role="tabpanel" aria-labelledby="tab-overview" tabindex="-1">
+  <h2 class="panel-title">개요</h2>
+
+  <div class="summary">
+    <p class="eyebrow" style="color:var(--accent)">핵심 요약</p>
+    <ul>
+      <li>무대 컨텐츠 — 상자 · 맥주 빨리 마시기 · 베스트드레서 · 두근두근 복면 소개팅 4종 확정</li>
+      <li>무대 시상 인원 7명, 소개팅 최종커플 2인은 별도 제외</li>
+      <li>무대 예산 70만원 — 상품 42만원 · 소품 28만원 배분</li>
+      <li>상품 전량 확정 — 럭키드로우 7개 · 무대 컨텐츠 시상 7명분 모두 품목과 구매처 확정</li>
+      <li>무대 타임라인 20:30 시작 ~ 21:50 이후 종료, 총 4개 컨텐츠 연속 진행</li>
+    </ul>
+  </div>
+
+  <div class="grid">
+    <div class="stat-tile"><span class="num">4</span><span class="lab">무대 컨텐츠 수</span></div>
+    <div class="stat-tile"><span class="num">7</span><span class="lab">무대 시상 인원 (소개팅 제외)</span></div>
+    <div class="stat-tile"><span class="num">70만</span><span class="lab">무대 총 예산 (원)</span></div>
+    <div class="stat-tile"><span class="num">09.16</span><span class="lab">소개팅 진행일 (수) 20:30~</span></div>
+  </div>
+
+  <div class="sec">
+    <h3 class="sec-title">시상 총괄</h3>
+    <div class="scroll-x">
+      <table>
+        <caption>컨텐츠별 시상 인원과 상품 — 무대 시상 합계 7명</caption>
+        <thead>
+          <tr><th scope="col">컨텐츠</th><th scope="col" class="num">시상 인원</th><th scope="col">상품</th><th scope="col">비고</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">상자</th><td class="num">4명</td><td>배달의민족 2만원권</td><td>2인 1팀 × 2팀, 라운드당 승리 1팀</td></tr>
+          <tr><th scope="row">맥주 빨리 마시기</th><td class="num">2명</td><td>배달의민족 2만원권</td><td>남 1명 · 여 1명</td></tr>
+          <tr><th scope="row">베스트드레서</th><td class="num">1명</td><td>무신사 10만원권</td><td>동점 시 회장단 투표로 결정</td></tr>
+          <tr><th scope="row">두근두근 복면 소개팅</th><td class="num">2명</td><td>아웃백 10만원권 2장</td><td>최종커플 성사 시 지급, 무대 시상 7명에서 제외</td></tr>
+        </tbody>
+        <tfoot>
+          <tr><th scope="row">무대 시상 합계</th><td class="num">7명</td><td colspan="2">소개팅 최종커플 2인 별도</td></tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3 class="sec-title">예산 배분</h3>
+    <div class="scroll-x">
+      <table>
+        <caption>무대 총 예산 70만원의 항목별 배분</caption>
+        <thead>
+          <tr><th scope="col">항목</th><th scope="col">내역</th><th scope="col" class="num">금액 (원)</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">복면 소개팅</th><td>아웃백 10만원권 2장</td><td class="num">200,000</td></tr>
+          <tr><th scope="row">베스트드레서</th><td>무신사 10만원권 × 1</td><td class="num">100,000</td></tr>
+          <tr><th scope="row">상자 · 맥주</th><td>배달의민족 2만원권 × 6명</td><td class="num">120,000</td></tr>
+          <tr><th scope="row">소품</th><td>무대 소품 일괄</td><td class="num">280,000</td></tr>
+        </tbody>
+        <tfoot>
+          <tr><th scope="row">합계</th><td>상품 420,000 + 소품 280,000</td><td class="num">700,000</td></tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+
+</section>
+
+<!-- ═══════════ 02 무대 컨텐츠 ═══════════ -->
+<section class="panel container" id="panel-content" role="tabpanel" aria-labelledby="tab-content" tabindex="-1" hidden>
+  <h2 class="panel-title">무대 컨텐츠</h2>
+  <p class="lead measure">무대에서 진행하는 컨텐츠 4종. 컨텐츠 참여자에게 럭키드로우 응모권 1장 추가 지급.</p>
+
+  <div class="sec">
+    <h3 class="sec-title">상자</h3>
+    <div class="grid">
+      <div class="card">
+        <h4>진행 방식</h4>
+        <ul class="bullets">
+          <li>총 12명, 2인 1조로 무대 등장</li>
+          <li>a조 · b조 각 6명(3팀)으로 분할, 총 2라운드 진행</li>
+          <li>a조 먼저 진행, 라운드당 제한시간 5분</li>
+          <li>상자 3개를 올리고 한 팀당 한 상자씩 맞추기</li>
+          <li>먼저 맞춘 팀이 점수 획득</li>
+          <li>a조 1팀 · b조 1팀 선발, 총 4명 시상</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>준비물</h4>
+        <p>상자마다 서로 다른 물건 투입. 총 6개.</p>
+        <ul class="bullets">
+          <li>말랑이</li><li>떡</li><li>푸딩</li><li>두부</li><li>오징어</li><li>산낙지</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>시상</h4>
+        <p>2팀 총 4명에게 배달의민족 2만원권 지급.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3 class="sec-title">맥주 빨리 마시기</h3>
+    <div class="grid">
+      <div class="card">
+        <h4>참가 구성</h4>
+        <ul class="bullets">
+          <li>여성 4명 — 350ml</li>
+          <li>남성 4명 — 500ml</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>시상</h4>
+        <p>여성 1명, 남성 1명에게 배달의민족 2만원권 지급.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3 class="sec-title">베스트드레서</h3>
+    <div class="grid">
+      <div class="card">
+        <h4>컨셉</h4>
+        <p>블랙 &amp; 레드를 활용한 코디. 인시디예스 전체 드레스코드와 동일.</p>
+      </div>
+      <div class="card">
+        <h4>심사 기준</h4>
+        <ul class="bullets">
+          <li>블랙 &amp; 레드를 활용한 코디</li>
+          <li>행사 주제(공포)와 어울리는 코디</li>
+          <li>컬러 포인트를 가장 잘 활용하고 드러낸 사람</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>심사 절차</h4>
+        <ul class="bullets">
+          <li>무대기획팀 내부 채점</li>
+          <li>동점자 발생 시 회장단으로 투표권 이관</li>
+          <li>최종 1명 시상</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3 class="sec-title">두근두근 복면 소개팅</h3>
+    <p class="measure">사전 구글폼으로 매칭된 남녀가 가면을 쓰고 진행. 목표 2커플, 1커플씩 순서대로 등장. 진행 10분 전 참가자를 무대 뒤로 이동시켜 복면 착용, 집합 장소는 사전 공지.</p>
+
+    <div class="stack" style="margin-block-start:var(--space-8)">
+      <div>
+        <h4>진행 순서</h4>
+        <ol class="steps" style="margin-block-start:var(--space-4)">
+          <li>서로를 알아가는 질문 주고받기</li>
+          <li>더 알아보고 싶다면 가면 벗기 — 한쪽이라도 벗지 않으면 종료</li>
+          <li>밸런스 게임 · 이구동성 게임 · 5초 아이컨택으로 궁합 확인</li>
+          <li>최종 선택 — 서로 마음에 들면 인스타그램 교환, 성사되지 않으면 그대로 퇴장</li>
+        </ol>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <h4>질문 목록</h4>
+          <ul class="bullets">
+            <li>자기소개 (나이 · 학번 · 학과 · MBTI)</li>
+            <li>이상형</li>
+            <li>여사친 · 남사친 유무</li>
+            <li>연락 빈도의 중요성</li>
+            <li>취미</li>
+            <li>선호하는 데이트</li>
+            <li>절대 안 되는 것 한 가지</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4>밸런스 게임</h4>
+          <ul class="bullets">
+            <li>남사친 · 여사친과 단 둘이 밥 — 가능 vs 불가능</li>
+            <li>내가 좋아하는 사람 vs 나를 좋아하는 사람</li>
+            <li>내 친구와 내 애인 둘이서만 귀신의 집 — 가능 vs 불가능</li>
+            <li>이성 포함 동기들과의 여행 — 가능 vs 불가능</li>
+            <li>추운 겨울날 손 시려도 같이 있기 vs 집에 들어가기</li>
+            <li>이성친구 스토리 좋아요 — 가능 vs 불가능</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4>이구동성 게임</h4>
+          <ul class="bullets">
+            <li>산 vs 바다</li>
+            <li>여름 vs 겨울</li>
+            <li>부먹 vs 찍먹</li>
+            <li>양념 vs 후라이드</li>
+            <li>짜장 vs 짬뽕</li>
+            <li>민초 vs 반민초</li>
+            <li>물복 vs 딱복</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ═══════════ 03 카드뉴스 백본 ═══════════ -->
+<section class="panel container" id="panel-cardnews" role="tabpanel" aria-labelledby="tab-cardnews" tabindex="-1" hidden>
+  <h2 class="panel-title">카드뉴스 백본</h2>
+  <p class="lead measure">홍보용 카드뉴스의 텍스트 백본. 디자인 작업 전 문안 확정용 자료로 현재 2종 완료.</p>
+
+  <div class="sec">
+    <h3 class="sec-title">베스트드레서</h3>
+    <p class="caption">총 5면 — 표지 · 드레스코드 · 이벤트 · 참여 유도 · 문의사항</p>
+    <div class="viewer viewer--tall" style="margin-block-start:var(--space-6)">
+      <div class="viewer-bar">
+        <span class="caption">베스트드레서 백본.pdf · 5면</span>
+        <a class="btn" href="assets/files/bestdresser-backbone.pdf" target="_blank" rel="noopener">새 창에서 열기</a>
+      </div>
+      <iframe src="assets/files/bestdresser-backbone.pdf#view=FitH" title="베스트드레서 카드뉴스 백본 PDF" loading="lazy"></iframe>
+    </div>
+    <p class="caption viewer-note">문서가 보이지 않는 브라우저에서는 새 창에서 열기로 확인.</p>
+  </div>
+
+  <div class="sec">
+    <h3 class="sec-title">심야소개팅</h3>
+    <p class="caption">총 7면 — 표지 · 컨셉 · 진행방식 · 안내사항 · 상품 · 유의사항 · 문의사항</p>
+    <div class="viewer viewer--tall" style="margin-block-start:var(--space-6)">
+      <div class="viewer-bar">
+        <span class="caption">소개팅 백본.pdf · 7면</span>
+        <a class="btn" href="assets/files/blinddate-backbone.pdf" target="_blank" rel="noopener">새 창에서 열기</a>
+      </div>
+      <iframe src="assets/files/blinddate-backbone.pdf#view=FitH" title="심야소개팅 카드뉴스 백본 PDF" loading="lazy"></iframe>
+    </div>
+    <p class="caption viewer-note">문서가 보이지 않는 브라우저에서는 새 창에서 열기로 확인.</p>
+
+    <div class="scroll-x" style="margin-block-start:var(--space-8)">
+      <table>
+        <caption>심야소개팅 모집 요강</caption>
+        <thead><tr><th scope="col">항목</th><th scope="col">내용</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">대상</th><td>디자인대학 재학생, 예체능대학 재학생</td></tr>
+          <tr><th scope="row">일시</th><td>2026.09.16(수) 20:30~</td></tr>
+          <tr><th scope="row">신청 방법</th><td>단과대 학생회 인스타그램 링크트리 내 &lsquo;심야소개팅&rsquo; 구글폼 작성</td></tr>
+          <tr><th scope="row">신청 기간</th><td>구글폼 업로드일 ~ 2026.09.13(일) 23:59 <span class="badge badge--risk">시작일 미정</span></td></tr>
+          <tr><th scope="row">선발 인원</th><td>남녀 각 2명</td></tr>
+          <tr><th scope="row">선발 안내</th><td>2026.09.15(화)</td></tr>
+          <tr><th scope="row">상품</th><td>아웃백 10만원권 2장</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3 class="sec-title">공통 문의처</h3>
+    <ul class="bullets">
+      <li>한양대학교 ERICA 디자인대학 공식 인스타그램 <b>@design_hyu</b></li>
+      <li>한양대학교 ERICA 예체능대학 공식 인스타그램 <b>@hyu_e_sports_and_arts_vibe</b></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ═══════════ 04 큐시트 ═══════════ -->
+<section class="panel container" id="panel-cuesheet" role="tabpanel" aria-labelledby="tab-cuesheet" tabindex="-1" hidden>
+  <h2 class="panel-title">큐시트</h2>
+  <p class="lead measure">컨텐츠 최종 정리 및 발표 자료. 무대는 20:30 소개팅으로 시작해 21:50 베스트드레서 마무리까지 약 80분 진행.</p>
+
+  <div class="sec">
+    <h3 class="sec-title">문서</h3>
+    <div class="viewer">
+      <div class="viewer-bar">
+        <span class="caption">인시디예스 무대 기획 — 컨텐츠 최종 정리 및 발표.pdf</span>
+        <a class="btn" href="assets/files/cuesheet.pdf" target="_blank" rel="noopener">새 창에서 열기</a>
+      </div>
+      <iframe src="assets/files/cuesheet.pdf#view=FitH" title="무대 큐시트 PDF" loading="lazy"></iframe>
+    </div>
+    <p class="caption viewer-note">문서가 보이지 않는 브라우저에서는 새 창에서 열기로 확인.</p>
+  </div>
+
+  <div class="sec">
+    <h3 class="sec-title">무대 타임라인</h3>
+    <div class="scroll-x">
+      <table>
+        <caption>컨텐츠별 진행 시각 — 20:30 시작, 21:50 이후 종료</caption>
+        <thead>
+          <tr><th scope="col">컨텐츠</th><th scope="col" class="num">시각</th><th scope="col">단계</th><th scope="col">내용</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row" rowspan="4">복면 소개팅</th><td class="num">20:30 ~ 20:35</td><td>소개팅 시작</td><td>행사 소개 및 출연진 입장</td></tr>
+          <tr><td class="num">20:35 ~ 20:45</td><td>자기소개 및 알아가기</td><td>학번 · 나이 · 학과 · MBTI · 이상형 등 기본 질문, 취미 · 선호하는 데이트</td></tr>
+          <tr><td class="num">20:45 ~ 20:55</td><td>컨텐츠 진행</td><td>밸런스 게임 및 이구동성</td></tr>
+          <tr><td class="num">20:55 ~ 21:00</td><td>마무리</td><td>아이컨택, 인스타 교환</td></tr>
+          <tr><th scope="row" rowspan="4">상자 물건 맞추기</th><td class="num">21:00 ~ 21:05</td><td>행사 시작</td><td>행사 소개 및 참여자 지원 받기</td></tr>
+          <tr><td class="num">21:05 ~ 21:10</td><td>첫 번째 게임</td><td>a조 게임 시작 (2인 1조 세 팀)</td></tr>
+          <tr><td class="num">21:10 ~ 21:15</td><td>두 번째 게임</td><td>b조 게임 시작 (2인 1조 세 팀)</td></tr>
+          <tr><td class="num">21:15 ~ 21:20</td><td>마무리</td><td>우승 팀 발표 및 정리</td></tr>
+          <tr><th scope="row" rowspan="4">맥주 빨리 마시기</th><td class="num">21:20 ~ 21:25</td><td>행사 시작</td><td>행사 소개 및 참여자 지원 받기 — 여자 4명, 남자 4명</td></tr>
+          <tr><td class="num">21:25 ~ 21:30</td><td>첫 번째 게임</td><td>여자 4명 진행 — 맥주 350ml 4캔</td></tr>
+          <tr><td class="num">21:30 ~ 21:35</td><td>두 번째 게임</td><td>남자 4명 진행 — 맥주 500ml 4캔</td></tr>
+          <tr><td class="num">21:35 ~</td><td>마무리</td><td>우승자 발표 및 정리</td></tr>
+          <tr><th scope="row" rowspan="4">베스트드레서</th><td class="num">21:35 ~ 21:40</td><td>행사 시작</td><td>행사 소개 및 참가자 소개</td></tr>
+          <tr><td class="num">21:40 ~ 21:45</td><td>참가자 소개</td><td>참가자 컨셉 소개</td></tr>
+          <tr><td class="num">21:45 ~ 21:50</td><td>심사</td><td>심사 점수 집계 및 발표</td></tr>
+          <tr><td class="num">21:50 ~</td><td>마무리</td><td>우승자 발표 및 정리</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3 class="sec-title">컨텐츠별 준비물</h3>
+    <div class="scroll-x">
+      <table>
+        <caption>무대 반입이 필요한 준비물</caption>
+        <thead><tr><th scope="col">컨텐츠</th><th scope="col">준비물</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">복면 소개팅</th><td>복면. 진행 10분 전 참가자를 무대 뒤로 이동, 집합 장소는 사전 공지</td></tr>
+          <tr><th scope="row">상자 물건 맞추기</th><td>물건 담긴 상자 — 말랑이 · 떡 · 푸딩 · 두부 · 오징어 · 산낙지</td></tr>
+          <tr><th scope="row">맥주 빨리 마시기</th><td>캔맥주 — 350ml 4캔, 500ml 4캔</td></tr>
+          <tr><th scope="row">럭키드로우</th><td>상자 7개. 상품을 랜덤 배치</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 05 확정 상품 ═══════════ -->
+<section class="panel container" id="panel-prizes" role="tabpanel" aria-labelledby="tab-prizes" tabindex="-1" hidden>
+  <h2 class="panel-title">확정 상품</h2>
+  <p class="lead measure">럭키드로우 7명분과 무대 컨텐츠 시상 7명분의 상품이 모두 확정. 구매처와 단가까지 정해진 상태.</p>
+
+  <div class="sec">
+    <h3 class="sec-title">문서</h3>
+    <div class="viewer">
+      <div class="viewer-bar">
+        <span class="caption">예밤 무대기획 — 확정 상품.pdf</span>
+        <a class="btn" href="assets/files/final-prizes.pdf" target="_blank" rel="noopener">새 창에서 열기</a>
+      </div>
+      <iframe src="assets/files/final-prizes.pdf#view=FitH" title="확정 상품 PDF" loading="lazy"></iframe>
+    </div>
+    <p class="caption viewer-note">문서가 보이지 않는 브라우저에서는 새 창에서 열기로 확인.</p>
+  </div>
+
+  <div class="sec">
+    <h3 class="sec-title">럭키드로우 운영</h3>
+    <div class="grid">
+      <div class="card">
+        <h4>규모</h4>
+        <ul class="bullets">
+          <li>상품 금액 총 150만원</li>
+          <li>당첨 인원 7명 — 7등까지</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>방식</h4>
+        <ul class="bullets">
+          <li>7개의 상자를 배치, 상품은 랜덤 구성</li>
+          <li>7등까지 뽑힌 당첨자가 나와서 상자 선택</li>
+          <li>등수와 무관하게 운으로 상품 결정</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>응모</h4>
+        <p>전체 관객 대상 추첨. 무대 컨텐츠 참여 시 응모권 1장 추가 지급.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3 class="sec-title">럭키드로우 상품</h3>
+    <div class="scroll-x">
+      <table>
+        <caption>등급별 확정 품목과 단가 — 총 7개</caption>
+        <thead>
+          <tr><th scope="col">등급</th><th scope="col">품목</th><th scope="col">구매처</th><th scope="col" class="num">금액 (원)</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row" rowspan="3">30만원대</th><td>Apple 2025 애플워치</td><td>쿠팡</td><td class="num">346,860</td></tr>
+          <tr><td>Apple 2024 에어팟 4</td><td>쿠팡</td><td class="num">244,790</td></tr>
+          <tr><td>크림 30만원권 — 원하는 것 받고 주문</td><td>KREAM</td><td class="num">300,000</td></tr>
+          <tr><th scope="row" rowspan="2">10만원대</th><td>풀리오 종아리마사지기 V3</td><td>카카오 선물하기</td><td class="num">153,400</td></tr>
+          <tr><td>올리브영 기프티콘 10만원권</td><td>카카오 선물하기</td><td class="num">100,000</td></tr>
+          <tr><th scope="row" rowspan="2">5만원대</th><td>스탠리 퀜처 H2.0 텀블러</td><td>쿠팡</td><td class="num">48,000</td></tr>
+          <tr><td>러쉬 리프레쉬 기프트 세트</td><td>쿠팡</td><td class="num">52,000</td></tr>
+        </tbody>
+        <tfoot>
+          <tr><th scope="row">합계</th><td>7개</td><td>책정 예산 150만원</td><td class="num">1,245,050</td></tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3 class="sec-title">무대 컨텐츠 상품</h3>
+    <div class="scroll-x">
+      <table>
+        <caption>컨텐츠별 확정 상품 — 시상 7명, 소개팅 최종커플 2인 별도</caption>
+        <thead>
+          <tr><th scope="col">컨텐츠</th><th scope="col">품목</th><th scope="col">구매처</th><th scope="col" class="num">단가 × 수량</th><th scope="col" class="num">금액 (원)</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">복면 소개팅</th><td>아웃백 10만원권</td><td>카카오 선물하기</td><td class="num">100,000 × 2</td><td class="num">200,000</td></tr>
+          <tr><th scope="row">상자 · 맥주</th><td>배달의민족 2만원 상품권</td><td>카카오 선물하기</td><td class="num">20,000 × 6</td><td class="num">120,000</td></tr>
+          <tr><th scope="row">베스트드레서</th><td>무신사 10만원권 — 원하는 것 받고 주문</td><td>무신사</td><td class="num">100,000 × 1</td><td class="num">100,000</td></tr>
+        </tbody>
+        <tfoot>
+          <tr><th scope="row">합계</th><td colspan="3">소품 28만원 별도</td><td class="num">420,000</td></tr>
+        </tfoot>
+      </table>
+    </div>
+    <div class="callout callout--info" style="margin-block-start:var(--space-8)">
+      <span class="lab">참고</span>
+      <p>무신사 10만원권은 10만원 내의 상품 1개로 수령. 3만원 + 4만원 + 1만원 식의 분할 구매는 불가.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="band--ink">
+  <div class="container">
+    <h2>인시디예스 무대기획팀</h2>
+    <p class="caption">디자인대학 X 예체능대학 연합 축제 · 무대 컨텐츠 기획 자료</p>
+    <div class="scroll-x" style="margin-block-start:var(--space-8)">
+      <table>
+        <caption class="caption" style="color:var(--gray-300)">개정 이력</caption>
+        <thead><tr><th scope="col">버전</th><th scope="col">일자</th><th scope="col">변경 내용</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">v1</th><td>2026-08-19</td><td>최초 작성 — 개요 · 무대 컨텐츠 · 카드뉴스 백본 2종 · 큐시트 구성</td></tr>
+          <tr><th scope="row">v1.1</th><td>2026-08-19</td><td>큐시트 · 확정 상품 반영 — 무대 타임라인 추가, 럭키드로우를 확정 상품 탭으로 이관</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="caption" style="margin-block-start:var(--space-8)">
+      문의 · 인스타그램 <a href="https://instagram.com/design_hyu">@design_hyu</a> ·
+      <a href="https://instagram.com/hyu_e_sports_and_arts_vibe">@hyu_e_sports_and_arts_vibe</a>
+    </p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var root=document.documentElement;
+  root.setAttribute('data-js','on');
+  var tabs=Array.prototype.slice.call(document.querySelectorAll('[role=tab]'));
+  var panels=Array.prototype.slice.call(document.querySelectorAll('[role=tabpanel]'));
+
+  function select(name,focus){
+    var found=false;
+    tabs.forEach(function(t){
+      var on=t.dataset.target===name;
+      if(on)found=true;
+      t.setAttribute('aria-selected',on?'true':'false');
+      t.tabIndex=on?0:-1;
+    });
+    if(!found)return false;
+    panels.forEach(function(p){
+      p.hidden=p.id!=='panel-'+name;
+    });
+    root.setAttribute('data-tab',name);
+    if(focus){
+      var t=document.getElementById('tab-'+name);
+      if(t)t.focus();
+    }
+    return true;
+  }
+
+  tabs.forEach(function(t,i){
+    t.tabIndex=t.getAttribute('aria-selected')==='true'?0:-1;
+    t.addEventListener('click',function(){
+      select(t.dataset.target,false);
+      history.replaceState(null,'','#'+t.dataset.target);
+      window.scrollTo({top:0,behavior:'smooth'});
+    });
+    t.addEventListener('keydown',function(e){
+      var d=0;
+      if(e.key==='ArrowRight'||e.key==='ArrowDown')d=1;
+      else if(e.key==='ArrowLeft'||e.key==='ArrowUp')d=-1;
+      else if(e.key==='Home')d=-i;
+      else if(e.key==='End')d=tabs.length-1-i;
+      else return;
+      e.preventDefault();
+      var n=tabs[(i+d+tabs.length)%tabs.length];
+      select(n.dataset.target,true);
+      history.replaceState(null,'','#'+n.dataset.target);
+    });
+  });
+
+  var hash=location.hash.replace('#','');
+  if(hash)select(hash,false);
+  window.addEventListener('hashchange',function(){
+    select(location.hash.replace('#',''),false);
+  });
+})();
+</script>
+</body>
+</html>
